@@ -2,6 +2,26 @@
 
 A full-featured notes management application built with Next.js 13, React 18, MongoDB, and Tailwind CSS. This application provides a complete CRUD (Create, Read, Update, Delete) solution for managing notes with advanced features like search, sorting, and responsive design.
 
+## Technology Stack & Flow
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   React 18      │◄──►│  Next.js 13      │◄──►│   API Routes    │
+│  (Frontend)     │    │  (Framework)     │    │   (Backend)     │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+         │                        │                        │
+         │                ┌──────────────────┐           │
+         └────────────────►   Middleware     │◄──────────┘
+                          │                  │
+                          └──────────────────┘
+                                          │
+                                          ▼
+                          ┌─────────────────────────────┐
+                          │     MongoDB Database      │
+                          │   (Data Storage & Query)   │
+                          └─────────────────────────────┘
+```
+
 ## Features
 
 - **Create Notes**: Create new notes with title and content
@@ -90,6 +110,51 @@ src/
 └── middleware.js          # Next.js middleware
 ```
 
+## Component Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Application Layout                           │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────────────────────────────────────────┐ │
+│  │                    Header Section                           │ │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────┐ │ │
+│  │  │   CreateNote    │  │   Search Bar    │  │ Sort By   │ │ │
+│  │  │   Component     │  │   Component     │  │ Dropdown  │ │ │
+│  │  └─────────────────┘  └─────────────────┘  └─────────────┘ │ │
+│  └─────────────────────────────────────────────────────────────┘ │
+│                                                                 │
+│  ┌─────────────────────────────────────────────────────────────┐ │
+│  │                    Notes Grid                               │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │ │
+│  │  │   NoteCard  │  │   NoteCard  │  │   NoteCard  │        │ │
+│  │  │    #1       │  │    #2       │  │    #3       │        │ │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘        │ │
+│  │           ...                                              │ │
+│  └─────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+
+NoteCard Component Breakdown:
+┌─────────────────────────────────────────────────────────────────┐
+│                         NoteCard                                │
+├─────────────────────────────────────────────────────────────────┤
+│ Title: [Note Title] [Edit Icon] [Delete Icon]                   │
+│ Content: First 6 words...                                       │
+│ Timestamp: Created at date/time                                 │
+│ [Click to open Modal View]                                      │
+└─────────────────────────────────────────────────────────────────┘
+
+Modal View:
+┌─────────────────────────────────────────────────────────────────┐
+│                        Full Note View                           │
+├─────────────────────────────────────────────────────────────────┤
+│ Title: [Full Title]                                             │
+│ Content: [Full Content Text]                                    │
+│ Created: [Timestamp]                                            │
+│ [Edit Button] [Delete Button] [Close Button]                    │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ## API Endpoints
 
 ### Notes API
@@ -168,6 +233,54 @@ This project uses Next.js App Router with the following features:
 - `title`: String (required, max 100 characters)
 - `content`: String (required, max 1000 characters)
 - `createdAt`: Date (auto-generated)
+
+## Data Flow Diagram
+
+```
+User Interaction
+       │
+       ▼
+┌─────────────────┐
+│   React UI      │
+│  Components     │
+└─────────────────┘
+       │
+       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   API Call      │───►│   Next.js       │───►│   MongoDB       │
+│   (fetch)       │    │   API Route     │    │   Database      │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                            │                        │
+                            ▼                        ▼
+                    ┌─────────────────┐    ┌─────────────────┐
+                    │   Validation    │    │   Data Query    │
+                    │   & Processing  │    │   & Storage     │
+                    └─────────────────┘    └─────────────────┘
+                            │                        │
+                            ▼                        ▼
+                    ┌─────────────────┐    ┌─────────────────┐
+                    │   Response      │◄───│   Result        │
+                    │   Formatting    │    │   Processing    │
+                    └─────────────────┘    └─────────────────┘
+                            │
+                            ▼
+                    ┌─────────────────┐
+                    │   React State   │
+                    │   Update        │
+                    └─────────────────┘
+```
+
+### MongoDB Schema
+
+```
+Note Schema:
+{
+  title: { type: String, required: true, maxlength: 100 },
+  content: { type: String, required: true, maxlength: 1000 },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+}
+```
 
 ## Contributing
 
